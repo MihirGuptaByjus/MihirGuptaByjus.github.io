@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>A test parent for Geogebra iframe</title>
+  </head>
+
+  <body>
+    <iframe
+      id="appletFrame"
+      src = "https://kelvinatemiehart.com/"
+
+      
+
+      scrolling="no"
+      style="
+        position: relative;
+        border: 2px solid whitesmoke;
+        width: 50vw;
+        height: 100vh;
+      "
+      title="Geogebra Frame"
+      sandbox="allow-same-origin allow-scripts"></iframe>
+
+    <script>
+      const defaultTestAppletData = [
+        {
+          id: "TA1",
+          url: "https://s3-whjr-v2-prod-bucket.whjr.online/a804d952-f8e3-42c0-8090-3f8234d09aea.ggb",
+          mode: "portrait",
+        },
+        {
+          id: "SA1",
+          url: "https://s3-whjr-v2-prod-bucket.whjr.online/f9a35089-72e3-4834-8277-dff988e75c00.ggb",
+          mode: "portrait",
+        },
+        {
+          id: "AA1",
+          url: "https://s3-whjr-v2-prod-bucket.whjr.online/e40c82d9-9873-4334-b887-23451fc27975.ggb",
+          mode: "portrait",
+        },
+        {
+          id: "CA",
+          url: "https://s3-whjr-v2-prod-bucket.whjr.online/f6405b91-9c6b-40af-94ad-f2af0680297d.ggb",
+          mode: "landscape",
+        },
+      ];
+
+     
+
+      (function () {
+        // your page initialization code here
+        // the DOM will be available here
+        const iframe = document.getElementById("appletFrame");
+        const frameWnd = iframe.contentWindow
+          ? iframe.contentWindow
+          : iframe.contentDocument.defaultView;
+        function frameEvents(event) {
+          switch (event.command) {
+            case "init":
+              frameWnd.postMessage(
+                { command: "setAppletUrls", data: defaultTestAppletData },
+                "*"
+              );
+              break;
+            case "cache-success":
+              console.log("Cache Successful, Got Response: ", event.data);
+              frameWnd.postMessage(
+                {
+                  command: "initializeParams",
+                  data: {
+                    roomId: "testRoom",
+                    studentId: "student1",
+                    teacherId: "teacher1",
+                    mode: "STUDENT",
+                  },
+                },
+                "*"
+              );
+            break;
+            case "params-initialized":
+              frameWnd.postMessage(
+                { command: "loadAppletById", data: "TA1" },
+                "*"
+              );
+              break;
+            case "applet-events":
+              console.log("AppletEvents: received from iframe", event.data.eventName, event.data.metadata)
+              // TODO: AppletEvents: log event (call to postInClass/postVCEvent)
+              break;
+            default:
+              break;
+          }
+        }
+
+        window.addEventListener(
+          "message",
+          (e) => {
+            console.log("Received from iFrame: ", e);
+            const key = e.message ? "message" : "data";
+            const event = e[key]; // event object format {name: 'EventName', data: {<parameter JSON>} }
+
+            frameEvents(event);
+          },
+          false
+        );
+      })();
+    </script>
+
+
+<script>
+
+const myfunction = () => {
+
+var iframe = document.getElementById('appletFrame');
+var video = document.getElementById("myVideo");
+
+iframe.addEventListener('load', function() {
+  
+  var iframeWindow = iframe.contentWindow;
+  if (iframeWindow) {
+    var canvas = iframeWindow.document.getElementsByTagName('canvas')[0];
+    if (canvas) {
+      console.log(">>>",canvas);
+      var stream = canvas.captureStream();  // capture the canvas as a media stream
+      video.srcObject = stream;  // attach the media stream to the video element
+        var playPromise = video.play();
+      console.log("video", video)
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+          // Automatic playback started!
+          // Show playing UI.
+          console.log("Show playing UI.")
+        })
+        .catch(error => {
+          // Auto-play was prevented
+          // Show paused UI.
+          console.log("error", e)
+        });
+      }
+    } else {
+      console.error(">>>",'Canvas element not found in iframe content');
+    }
+  } else {
+    console.error(">>>",'Could not access iframe content window');
+  }
+});
+}
+// src = "index.html"
+// src = "https://kelvinatemiehart.com/"
+//   src = "https://byjus.com/us/math/study/concept/area-of-a-triangle"
+
+  var video = document.createElement("video");
+  setTimeout(function() {
+    var canvas = document.getElementById('appletFrame').contentWindow
+    console.log(canvas.document.getElementsByTagName('flt-glass-pane')[0].shadowRoot.querySelector('canvas'))
+    // var stream = canvas.captureStream();  // capture the canvas as a media stream
+    //   video.srcObject = stream;  // attach the media stream to the video element
+    //   video.autoplay = true
+    //   video.style.width = "40vw"
+    //   // video.play();  // play the video
+    //   document.body.appendChild(video)
+    console.log(canvas)
+  }, 3000)
+
+
+//----------------Working code for index.html-------------------------------------------------------------
+
+  // var video = document.createElement("video");
+  // setTimeout(function() {
+  //   var canvas = document.getElementById('appletFrame').contentWindow.document.getElementsByTagName('canvas')[0];
+  //   var stream = canvas.captureStream();  // capture the canvas as a media stream
+  //     video.srcObject = stream;  // attach the media stream to the video element
+  //     video.autoplay = true
+  //     video.style.width = "40vw"
+  //     // video.play();  // play the video
+  //     document.body.appendChild(video)
+  //   console.log(canvas)
+  // }, 5000)
+
+// --------------------------------------------------------------------------------------------------------
+
+
+
+// var iframe = document.getElementById('appletFrame');
+// iframe.addEventListener('load', function() {
+//   var iframeWindow = iframe.contentWindow;
+//   console.log("log1")
+//   if (iframeWindow) {
+//   console.log("log2")
+
+//     iframeWindow.addEventListener('load', function() {
+//   console.log("log3")
+
+//       var canvas = iframeWindow.document.querySelector('canvas');
+//       if (canvas) {
+//         console.log(">>>",canvas);
+//       } else {
+//         console.error('>>> Canvas element not found in iframe content');
+//       }
+//     });
+//   } else {
+//     console.error('>>>Could not access iframe content window');
+//   }
+// });
+// var iframe = document.getElementById("appletFrame");
+// iframe.addEventListener('load', function() {
+// console.log(">>>iframe", iframe)
+// var iframeWindow = iframe.contentWindow;
+// var canvas = iframeWindow.document.querySelector('canvas');
+// // console.log(">>>iframeWindow", iframeWindow.querySelector("canvas"))
+// // var canvas = iframeWindow.document.getElementsByTagName('canvas')[0];
+// console.log(">>>canvas",canvas)
+// })
+
+// var canvas = document.getElementById("myCanvas");
+// var context = canvas.getContext("2d");
+
+// var video = document.getElementById("myVideo");
+
+// setInterval(function() {
+//   console.log(iframeDoc, 0, 0, canvas.width, canvas.height)
+//   context.drawImage(iframeDoc.document.body, 0, 0, canvas.width, canvas.height);
+//   var stream = canvas.captureStream();  // capture the canvas as a media stream
+//   video.srcObject = stream;  // attach the media stream to the video element
+//   video.play();  // play the video
+// }, 1000); 
+</script>
+  </body>
+</html>
